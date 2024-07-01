@@ -1,0 +1,18 @@
+spring.application.name: suda
+
+spring:
+  profiles:
+    group:
+      dev: dev, common, log
+      prod: prod, common, log
+    active: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
