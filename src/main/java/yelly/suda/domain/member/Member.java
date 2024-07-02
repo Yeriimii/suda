@@ -25,6 +25,9 @@ public class Member extends BaseTimeEntity {
     @Column(name = "MEMBER_ID")
     private Long id;
 
+    @Column(name = "OAUTH_ID")
+    private String oAuthId;
+
     @Column(name = "USERNAME")
     private String username;
 
@@ -33,4 +36,9 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "ROLE")
     private String role;
+
+    public Member changeUsername(String username) {
+        this.username = username;
+        return this;
+    }
 }
