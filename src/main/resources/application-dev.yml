@@ -33,4 +33,5 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
 
-allowOrigin: http://localhost:5173
+allow-origin: http://localhost:5173
+jwt-secret: VIOv7+aUmCSK1Rcb8uo8PcQA3pBgKq0Jjgk9Fko7MtU=

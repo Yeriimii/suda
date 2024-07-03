@@ -17,7 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("#{environment['allowOrigin']}")
+    @Value("#{environment['allow-origin']}")
     private String allowOrigin;
 
     @Bean
