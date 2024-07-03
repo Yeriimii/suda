@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum SudaOAuth2Provider {
-    KAKAO("kakao", "nickName", "account_email", "profile_image"),
+    KAKAO("kakao", "nickname", "account_email", "profile_image"),
     GOOGLE("google", "name", "email", "picture");
 
     private final String providerName;
