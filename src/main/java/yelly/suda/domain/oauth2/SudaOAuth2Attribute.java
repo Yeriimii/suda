@@ -78,7 +78,7 @@ public class SudaOAuth2Attribute {
 
     public Member toMember() {
         return Member.builder()
-                .oAuthId(attributes.get(nameAttributeKey) + DIVIDER + providerName)
+                .oauthId(attributes.get(nameAttributeKey) + DIVIDER + providerName)
                 .username(username)
                 .email(email)
                 .role(DEFAULT_ROLE)

@@ -45,7 +45,7 @@ public class SudaOAuth2UserService implements OAuth2UserService<OAuth2UserReques
     }
 
     private Member saveOrUpdate(SudaOAuth2Attribute attribute) {
-        Member member = memberRepository.findByOAuthId(attribute.getOAuthId())
+        Member member = memberRepository.findByOauthId(attribute.getOAuthId())
                 .orElse(attribute.toMember());
 
         // OAuth 유저의 이름이 변경되었다면 멤버의 username 업데이트
