@@ -84,7 +84,7 @@
   </div>
 
   <!--  대화창  -->
-  <div class="min-h-[180px] max-h-[280px] overflow-y-auto">
+  <div class="min-h-[280px] max-h-[280px] overflow-y-auto">
     <div class="flex flex-col gap-2">
       {#each chatLogs as chat, idx}
         <!-- 채팅 요소 하나 -->
@@ -101,10 +101,12 @@
           </div>
           <!-- 채팅 내용 -->
           <div class="flex flex-col pl-1 pr-4 text-[14px] break-all whitespace-pre-wrap">
+            <!-- 작성자 + 작성 시간 -->
             <div class="flex gap-2 items-end">
-              <span>{chat.username}</span>
+              <span class="font-bold">{chat.username}</span>
               <span class="text-[11px] text-gray-400">{elapsedTime(chat.timestamp)}</span>
             </div>
+            <!-- 메시지 -->
             <div class="text-[13px]">{chat.message}</div>
           </div>
         </div>
