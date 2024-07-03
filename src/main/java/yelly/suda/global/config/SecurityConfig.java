@@ -11,11 +11,16 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import yelly.suda.domain.oauth2.SudaOAuth2SuccessHandler;
+import yelly.suda.domain.oauth2.SudaOAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final SudaOAuth2UserService userService;
+    private final SudaOAuth2SuccessHandler successHandler;
 
     @Value("#{environment['allow-origin']}")
     private String allowOrigin;
@@ -48,9 +53,8 @@ public class SecurityConfig {
         /* OAuth2 */
         http.oauth2Login(oauth2Config ->
                 oauth2Config.loginPage(allowOrigin + "/login")
-//                        .successHandler(null)
-//                        .userInfoEndpoint(endpointConfig -> endpointConfig.userService(null))
-        );
+                        .userInfoEndpoint(endpointConfig -> endpointConfig.userService(userService))
+                        .successHandler(successHandler));
 
         return http.build();
     }
