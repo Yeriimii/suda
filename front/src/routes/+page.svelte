@@ -2,7 +2,7 @@
   import Header from "../components/Header.svelte";
   import {writable} from "svelte/store";
   import {onMount} from "svelte";
-  import ChatMenuPopup from "../components/ChatMenuPopup.svelte";
+  import ChatMenuPopup from "../components/ChatPopup.svelte";
 
   export const jwtToken = writable("");
 
