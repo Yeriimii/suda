@@ -1,19 +1,16 @@
 <script>
   import { createEventDispatcher } from "svelte";
   import { goto } from "$app/navigation";
+  import { get } from "svelte/store";
+  import { member } from "$lib/auth"
 
   export let onProfilePopup
 
   const dispatch = createEventDispatcher();
 
-  let user = {
-    "username": null,
-    "profileImageUrl": null
+  const isLogin = () => {
+    return get(member).id !== '';
   }
-
-  user = JSON.parse(localStorage.getItem('jwt'));
-
-  console.log('popup: ', user)
 
   const onLogin = () => {
     goto('/login');
@@ -21,9 +18,7 @@
   }
 
   const onLogout = () => {
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('refresh');
-
+    member.logout();
     dispatch('logout', 'bye');
 
     onProfilePopup = !onProfilePopup;
@@ -31,12 +26,12 @@
 </script>
 
 <div class="profile-popup-container" role="menu">
-    {#if user === null}
+    {#if !isLogin()}
         <button class="profile-popup-btn" role="menuitem" tabindex="0"
                 on:click={(e) => {e.stopPropagation(); onLogin();}}>
             <span class="profile-popup-btn-label">로그인</span>
         </button>
-    {:else if user !== null}
+    {:else if isLogin()}
         <button class="profile-popup-btn" role="menuitem" tabindex="0"
                 on:click={(e) => {e.stopPropagation();}}>
             <span class="profile-popup-btn-label">내 채팅방</span>
