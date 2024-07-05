@@ -48,6 +48,7 @@ public class SecurityConfig {
         /* request filter */
         http.authorizeHttpRequests(request ->
                 request.requestMatchers("/api/v1/**").permitAll()
+                        .requestMatchers("/suda/**").permitAll() // STOMP 허용
                         .anyRequest().authenticated());
 
         /* OAuth2 */
