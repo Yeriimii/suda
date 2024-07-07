@@ -14,6 +14,6 @@
 <img src="https://github.com/Yeriimii/suda/assets/87357932/f288a588-b153-4d35-a60b-03560a45ecf7" alt="스크롤 이동" width="350">
 
 ## ERD
-<img src="https://gist.github.com/assets/87357932/496394ad-53ac-43ec-8dd0-23257d7d0719" alt="ERD" width="350">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/87357932/344742428-496394ad-53ac-43ec-8dd0-23257d7d0719.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240703%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240703T152855Z&X-Amz-Expires=300&X-Amz-Signature=0ef4f4c4a933479c5290a1a040490de4dfbdd2479e840c54c84e21fcd653b497&X-Amz-SignedHeaders=host&actor_id=0&key_id=0&repo_id=0" alt="ERD" width="350">
 
 - CHAT_ROOMS 테이블 의 pk 가 uuid 인 이유: 채팅방에 초대할 때 외부에 노출되기 때문에 사용자가 유추할 수 없도록 의도했습니다.
