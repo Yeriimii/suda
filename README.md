@@ -8,10 +8,10 @@
 
 ## 채팅방 화면
 ### 기본 화면
-<img src="https://gist.github.com/assets/87357932/03722a84-db51-4c66-a11d-e5bac1a4e920" alt="채팅방 예시" width="350" height="450">
+<img src="https://github.com/Yeriimii/suda/assets/87357932/7f4d9bd4-d787-42ba-9990-352f40544995" alt="채팅방 예시" width="350" height="450">
 
 ### 새로운 채팅이 생겼을 때 스크롤 이동
-<img src="https://gist.github.com/assets/87357932/fe87e69e-d431-4b48-96bf-b6032765bea1" alt="스크롤 이동" width="350">
+<img src="https://github.com/Yeriimii/suda/assets/87357932/f288a588-b153-4d35-a60b-03560a45ecf7" alt="스크롤 이동" width="350">
 
 ## ERD
 <img src="https://gist.github.com/assets/87357932/496394ad-53ac-43ec-8dd0-23257d7d0719" alt="ERD" width="350">
