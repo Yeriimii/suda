@@ -38,6 +38,12 @@ spring:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
+  rabbitmq:
+    username: ${rmq-id}
+    password: ${rmq-password}
+    host: localhost
+    port: 5672  # AMQP 포트
+    virtual-host: /
 
 allow-origin: http://localhost:5173
 jwt-secret: ${jwt-secret}
