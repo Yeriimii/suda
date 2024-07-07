@@ -4,9 +4,15 @@
   import { connect } from "../lib/stompClient"
   import { member } from "$lib/auth"
   import { get } from "svelte/store";
+  import "dayjs/locale/ko";
+  import relativeTime from "dayjs/plugin/relativeTime";
+  import dayjs from "dayjs";
 
   export let onPopupOpen;
   export let login;
+
+  dayjs.extend(relativeTime);
+  dayjs.locale("ko");
 
   let message = '';
   let chatLog = [];
@@ -36,7 +42,7 @@
 
     stompClient = connect("ws://localhost:8080/suda", message => {
       console.log('received message', message)
-      chatLog = [...chatLog, message.text];
+      chatLog = [...chatLog, message]; // TODO: 채팅 내역을 임시 저장하는 스토어 생성 필요
       chatLogs = chatLog
       console.log('chatLogs:', chatLogs)
     });
@@ -68,40 +74,25 @@
   const sendMessage = () => {
     console.log(user !== null ? user.username : 'tester', message);
 
+    let chatRoomId = "1";
+
     const newMessage = {
       id: user !== null ? user.id : 0,
       username: user !== null ? user.username : 'tester',
       profileImageUrl: user !== null ? user.profileImageUrl : null,
       message: message,
-      timestamp: new Date()
+      timestamp: dayjs().format()
     };
 
-    stompClient.sendMessage("/pub/chat.exchange", {text: newMessage});
-    stompClient.sendMessage("/topic/messages", {text: newMessage});
+    console.log('new:', newMessage);
 
-    // chatLog = [...chatLog, newMessage];
-    // chatLogs = chatLog
-    // console.log(chatLogs)
+    stompClient.sendMessage(`/pub/chat.message.${chatRoomId}`, newMessage);
+
     message = '';
   }
 
   const elapsedTime = (date) => {
-    const start = new Date(date);
-    const end = new Date();
-
-    const seconds = Math.floor((end.getTime() - start.getTime()) / 1000);
-    if (seconds < 60) return '방금 전';
-
-    const minutes = seconds / 60;
-    if (minutes < 60) return `${Math.floor(minutes)}분 전`;
-
-    const hours = minutes / 60;
-    if (hours < 24) return `${Math.floor(hours)}시간 전`;
-
-    const days = hours / 24;
-    if (days < 7) return `${Math.floor(days)}일 전`;
-
-    return `${start.toLocaleDateString()}`;
+    return dayjs(date).fromNow();
   };
 </script>
 
