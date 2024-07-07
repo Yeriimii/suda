@@ -1,22 +1,56 @@
 <script>
   import Textarea from "./Textarea.svelte";
-  import { beforeUpdate, afterUpdate } from "svelte";
+  import { beforeUpdate, afterUpdate, onDestroy, onMount } from "svelte";
+  import { connect } from "../lib/stompClient"
+  import { member } from "$lib/auth"
+  import { get } from "svelte/store";
+  import "dayjs/locale/ko";
+  import relativeTime from "dayjs/plugin/relativeTime";
+  import dayjs from "dayjs";
 
   export let onPopupOpen;
   export let login;
 
+  dayjs.extend(relativeTime);
+  dayjs.locale("ko");
+
   let message = '';
   let chatLog = [];
+  let stompClient;
 
   $: login;
   $: message;
   $: chatLogs = chatLog;
+  $: WelcomeMessage = stompClient === null ? '연결 중입니다.' : '연결 되었습니다.';
 
-  const user = JSON.parse(localStorage.getItem('jwt'));
+  $: user = {
+    id: 0,
+    username: 'guest',
+    profileImageUrl: null
+  };
 
   const closePopup = () => {
     onPopupOpen = false;
   }
+
+  onMount(() => {
+    user = {
+      id: get(member).id,
+      username: get(member).username,
+      profileImageUrl: get(member).profileImageUrl
+    };
+
+    stompClient = connect("ws://localhost:8080/suda", message => {
+      console.log('received message', message)
+      chatLog = [...chatLog, message]; // TODO: 채팅 내역을 임시 저장하는 스토어 생성 필요
+      chatLogs = chatLog
+      console.log('chatLogs:', chatLogs)
+    });
+  });
+
+  onDestroy(() => {
+    stompClient.disconnect();
+  })
 
   let previousChatCount = 0;
 
@@ -32,7 +66,7 @@
       const newChatId = chatLogs.length - 1;
       const newChatElement = document.querySelector(`[data-chat-id="${newChatId}"]`);
       if (newChatElement) {
-        newChatElement.scrollIntoView({ behavior: 'smooth' });
+        newChatElement.scrollIntoView({behavior: 'smooth'});
       }
     }
   });
@@ -40,43 +74,36 @@
   const sendMessage = () => {
     console.log(user !== null ? user.username : 'tester', message);
 
+    let chatRoomId = "1";
+
     const newMessage = {
+      id: user !== null ? user.id : 0,
       username: user !== null ? user.username : 'tester',
+      profileImageUrl: user !== null ? user.profileImageUrl : null,
       message: message,
-      timestamp: new Date()
+      timestamp: dayjs().format()
     };
 
-    chatLog = [...chatLog, newMessage];
-    chatLogs = chatLog
+    console.log('new:', newMessage);
+
+    stompClient.sendMessage(`/pub/chat.message.${chatRoomId}`, newMessage);
+
     message = '';
-    console.log(chatLogs)
   }
 
   const elapsedTime = (date) => {
-    const start = new Date(date);
-    const end = new Date();
-
-    const seconds = Math.floor((end.getTime() - start.getTime()) / 1000);
-    if (seconds < 60) return '방금 전';
-
-    const minutes = seconds / 60;
-    if (minutes < 60) return `${Math.floor(minutes)}분 전`;
-
-    const hours = minutes / 60;
-    if (hours < 24) return `${Math.floor(hours)}시간 전`;
-
-    const days = hours / 24;
-    if (days < 7) return `${Math.floor(days)}일 전`;
-
-    return `${start.toLocaleDateString()}`;
+    return dayjs(date).fromNow();
   };
 </script>
 
-<div class="chat-popup-container absolute z-[99] bottom-16 right-0 w-[320px] min-w-[280px] pl-3 pr-1 py-1 border bg-white drop-shadow-md rounded-xl animate-fade duration-300" role="menu">
+<div
+    class="chat-popup-container absolute z-[99] bottom-16 right-0 w-[320px] min-w-[280px] pl-3 pr-1 py-1 border bg-white drop-shadow-md rounded-xl animate-fade duration-300"
+    role="menu">
   <!-- 헤더 -->
   <div class="flex justify-between items-center">
     <span>1:1 채팅방</span>
-    <button type="button" on:click={closePopup} class="flex justify-center items-center size-12 rounded-full hover:bg-gray-200">
+    <button type="button" on:click={closePopup}
+            class="flex justify-center items-center size-12 rounded-full hover:bg-gray-200">
       <span class="text-gray-800 font-bold text-2xl">
         <i class="bi bi-x-lg"></i>
       </span>
@@ -86,16 +113,17 @@
   <!--  대화창  -->
   <div class="min-h-[280px] max-h-[280px] overflow-y-auto">
     <div class="flex flex-col gap-2">
+      <span class="text-[12px] text-gray-400 text-center">{WelcomeMessage}</span>
       {#each chatLogs as chat, idx}
         <!-- 채팅 요소 하나 -->
         <div data-chat-id={idx} class="flex gap-2 justify-start items-center text-gray-800">
           <!-- 프로필 이미지 -->
           <div class="self-start">
-            {#if login === true}
-              <img class="w-[30px] h-[30px] rounded-full" src={user.profileImageUrl} alt="프로필 이미지"/>
+            {#if chat.profileImageUrl !== null}
+              <img class="w-[30px] h-[30px] rounded-full" src={chat.profileImageUrl} alt="프로필 이미지"/>
             {:else}
               <div class="size-8 min-w-8 min-h-8 bg-amber-200 rounded-full content-center">
-                <span class="text-sm">tester</span>
+                <span class="text-sm">guest</span>
               </div>
             {/if}
           </div>
@@ -127,12 +155,13 @@
 
     <!--  텍스트 입력창  -->
     <div class="w-full">
-      <Textarea bind:value={message} minRows={1} maxRows={40} on:send={sendMessage} />
+      <Textarea bind:value={message} minRows={1} maxRows={40} on:send={sendMessage}/>
     </div>
 
     <!--  전송 버튼  -->
-    <button class="flex justify-center -ml-1 mr-1 p-2 size-8 min-w-8 min-h-8 rounded-full bg-sky-300/80 hover:bg-sky-300 active:transition-all active:scale-[0.98] active:duration-75"
-          on:click={sendMessage}>
+    <button
+        class="flex justify-center -ml-1 mr-1 p-2 size-8 min-w-8 min-h-8 rounded-full bg-sky-300/80 hover:bg-sky-300 active:transition-all active:scale-[0.98] active:duration-75"
+        on:click={sendMessage}>
       <span class="text-md text-center -translate-y-0.5 text-white">
         <i class="bi bi-send-fill"></i>
       </span>

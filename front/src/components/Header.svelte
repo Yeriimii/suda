@@ -1,4 +1,7 @@
 <script>
+  import { get } from "svelte/store";
+  import { beforeUpdate} from "svelte";
+  import { member } from "$lib/auth"
   import ProfilePopup from "./ProfilePopup.svelte";
 
   export let login;
@@ -7,6 +10,17 @@
   let onProfilePopup = false;
 
   $: login;
+  let profileImageUrl;
+  $: profileImageUrl = get(member).profileImageUrl;
+
+  beforeUpdate(() => {
+    const memberObj = get(member);
+    if (memberObj.profileImageUrl) {
+      profileImageUrl = memberObj.profileImageUrl;
+    } else {
+      profileImageUrl = null;
+    }
+  })
 
   const onProfilePopupClick = () => {
     onProfilePopup = !onProfilePopup;
@@ -36,8 +50,8 @@
                     <path d="M3 18H21" stroke="#333333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </span>
-            {#if login === true}
-                <img class="w-[30px] h-[30px] rounded-full" src={JSON.parse(localStorage.getItem('jwt')).profileImageUrl} alt="프로필 이미지"/>
+            {#if profileImageUrl}
+                <img class="w-[30px] h-[30px] rounded-full" src={profileImageUrl} alt="프로필 이미지"/>
             {:else}
                 <span class="user flex justify-center items-center size-[32px] font-bold p-[7px] text-[8px] rounded-full text-white bg-gray-500">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
